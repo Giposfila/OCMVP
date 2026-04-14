@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VerifyAI{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span class="logo-text">VerifyAI</span>
+        </div>
+        <div class="nav-links">
+            <a href="/" class="nav-link">Главная</a>
+            <a href="/history" class="nav-link">История</a>
+            {% if request.session.get("user_email") %}
+                <span class="nav-user">{{ request.session.get("user_email") }}</span>
+                <form method="post" action="/auth/logout" style="display:inline">
+                    <button type="submit" class="nav-link btn-logout">Выйти</button>
+                </form>
+            {% else %}
+                <a href="/auth/login" class="nav-link">Войти</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

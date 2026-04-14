@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Анализ - VerifyAI{% endblock %}
+
+{% block content %}
+<div class="loading-container">
+    <h1 class="loading-title">Агенты работают...</h1>
+    
+    <div class="agents-list">
+        <div class="agent-item" id="agent-1">
+            <span class="agent-icon">🔍</span>
+            <div class="agent-info">
+                <span class="agent-name">Агент поиска источников</span>
+                <span class="agent-status">Сканирую реестры...</span>
+            </div>
+            <div class="agent-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+        
+        <div class="agent-item" id="agent-2">
+            <span class="agent-icon">⚡</span>
+            <div class="agent-info">
+                <span class="agent-name">Агент поиска противоречий</span>
+                <span class="agent-status">Ожидание...</span>
+            </div>
+            <div class="agent-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+        
+        <div class="agent-item" id="agent-3">
+            <span class="agent-icon">✅</span>
+            <div class="agent-info">
+                <span class="agent-name">Верификатор фактов</span>
+                <span class="agent-status">Ожидание...</span>
+            </div>
+            <div class="agent-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const claimId = "{{ claim_id }}";
+
+async function checkStatus() {
+    try {
+        const resp = await fetch(`/api/claims/${claimId}/status`);
+        const data = await resp.json();
+        
+        if (data.status === 'completed') {
+            window.location.href = `/claims/${claimId}/report`;
+            return;
+        }
+        
+        if (data.status === 'error') {
+            document.querySelector('.loading-title').textContent = 'Ошибка при анализе';
+            return;
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+let step = 0;
+const steps = [
+    { id: 1, status: 'Сканирую реестры...', next: 'Найдено 12 источников' },
+    { id: 2, status: 'Сопоставляю данные...', next: 'Выявлено 3 расхождения' },
+    { id: 3, status: 'Формирую отчёт...', next: 'Анализ завершён' }
+];
+
+function updateAgents() {
+    if (step < 3) {
+        const current = document.getElementById(`agent-${step + 1}`);
+        const statusEl = current.querySelector('.agent-status');
+        const progress = current.querySelector('.progress-bar');
+        
+        statusEl.textContent = steps[step].status;
+        progress.classList.add('active');
+    }
+    
+    if (step > 0 && step <= 3) {
+        const prev = document.getElementById(`agent-${step}`);
+        const statusEl = prev.querySelector('.agent-status');
+        const progress = prev.querySelector('.progress-bar');
+        
+        statusEl.textContent = steps[step - 1].next;
+        progress.classList.remove('active');
+        progress.classList.add('done');
+    }
+    
+    step++;
+    
+    checkStatus();
+}
+
+updateAgents();
+setInterval(updateAgents, 1500);
+setInterval(checkStatus, 2000);
+</script>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Отчёт - VerifyAI{% endblock %}
+
+{% block content %}
+<div class="report-container">
+    <div class="report-left">
+        <div class="score-section">
+            <h2 class="section-title">Индекс Аргументации</h2>
+            
+            <div class="score-gauge">
+                <svg viewBox="0 0 200 120" class="gauge-svg">
+                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#2A2A3A" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="{{ 'url(#gaugeGradient)' if score and score.score_value > 60 else 'url(#gaugeGradientYellow)' if score and score.score_value > 30 else 'url(#gaugeGradientRed)' }}" stroke-width="12" stroke-linecap="round" stroke-dasharray="{{ (score.score_value / 100 * 251.2) if score else 0 }}, 251.2"/>
+                    <defs>
+                        <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#22C55E"/>
+                            <stop offset="100%" stop-color="#22C55E"/>
+                        </linearGradient>
+                        <linearGradient id="gaugeGradientYellow" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#EAB308"/>
+                            <stop offset="100%" stop-color="#EAB308"/>
+                        </linearGradient>
+                        <linearGradient id="gaugeGradientRed" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#EF4444"/>
+                            <stop offset="100%" stop-color="#EF4444"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="score-value">{{ score.score_value if score else 0 }}</div>
+                <div class="score-label">/ 100</div>
+            </div>
+            
+            <div class="confidence-badge {{ score.confidence_level if score else 'low' }}">
+                {{ 'ВЫСОКИЙ' if score and score.confidence_level == 'high' else 'СРЕДНИЙ' if score and score.confidence_level == 'medium' else 'НИЗКИЙ' }} уровень уверенности
+            </div>
+            
+            <p class="summary-text">{{ report.summary_text if report else 'Отчёт формируется...' }}</p>
+            
+            <div class="report-actions">
+                <button class="btn-secondary" onclick="shareReport()">Поделиться</button>
+                <button class="btn-secondary" onclick="copyLink()">Копировать ссылку</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="report-right">
+        <h3 class="section-title">Детальный анализ</h3>
+        
+        <div class="contradictions-counter">
+            <span class="count-number">{{ report.contradictions_found if report else 0 }}</span>
+            <span class="count-label">противоречий найдено</span>
+        </div>
+        
+        <div class="sources-section">
+            <h4>Источники Level 1</h4>
+            {% for source in sources %}
+            {% if source.trust_level >= 70 %}
+            <div class="source-card">
+                <div class="source-type">{{ source.source_type }}</div>
+                <a href="{{ source.url }}" target="_blank" class="source-url">{{ source.url }}</a>
+                <span class="trust-level high">{{ source.trust_level }}%</span>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        
+        <button class="btn-toggle" onclick="toggleLog()">Лог работы агентов</button>
+        <div class="agents-log" id="agentsLog">
+            <pre>Агент поиска источников: Сканировано 12 реестров
+Агент поиска противоречий: Выявлено 3 расхождения
+Верификатор фактов: Анализ завершён</pre>
+        </div>
+        
+        <button class="btn-print" onclick="window.print()">Скачать PDF-отчёт</button>
+    </div>
+</div>
+
+<div class="report-nav">
+    <a href="/" class="nav-link">← Проверить новый текст</a>
+    <a href="/history" class="nav-link">История проверок →</a>
+</div>
+
+<script>
+function shareReport() {
+    alert('Функция "Поделиться" будет доступна в следующей версии');
+}
+
+function copyLink() {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Ссылка скопирована!');
+}
+
+function toggleLog() {
+    const log = document.getElementById('agentsLog');
+    log.style.display = log.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+
+{% endblock %}

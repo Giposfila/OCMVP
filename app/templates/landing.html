@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - VerifyAI{% endblock %}
+
+{% block content %}
+<div class="landing-container">
+    <div class="hero">
+        <h1 class="hero-title">Проверь информацию за 15 секунд</h1>
+        <p class="hero-subtitle">Не верьте на слово — проверьте факты</p>
+    </div>
+    
+    <form method="post" action="/claims/submit" class="claim-form">
+        <textarea 
+            name="content_body" 
+            class="claim-input" 
+            placeholder="Вставьте текст новости, ссылку или пересланное сообщение..."
+            required
+        ></textarea>
+        <input type="hidden" name="source_platform" value="Web">
+        <button type="submit" class="btn-primary">Анализировать</button>
+    </form>
+    
+    <div class="trending">
+        <h3 class="trending-title">Сейчас обсуждают</h3>
+        <div class="trending-cards">
+            <div class="trending-card" onclick="fillClaim('Курс доллара упадет до 50 рублей к концу года — эксперты прогнозируют...')">
+                <span class="card-tag">Экономика</span>
+                <p class="card-text">Курс доллара упадет до 50 рублей к концу года...</p>
+            </div>
+            <div class="trending-card" onclick="fillClaim('В России отменят пенсионную реформу и вернут пенсию в 55/60 лет...')">
+                <span class="card-tag">Политика</span>
+                <p class="card-text">В России отменят пенсионную реформу и вернут пенсию...</p>
+            </div>
+            <div class="trending-card" onclick="fillClaim('Новый закон разрешает конфискацию имущества у должников без суда...')">
+                <span class="card-tag">Закон</span>
+                <p class="card-text">Новый закон разрешает конфискацию имущества у должников...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function fillClaim(text) {
+    document.querySelector('.claim-input').value = text;
+    document.querySelector('.claim-input').focus();
+}
+</script>
+
+{% endblock %}

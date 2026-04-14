@@ -1,0 +1,4 @@
+.env
+*.db
+.ruff_cache/
+__pycache__/

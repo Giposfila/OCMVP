@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}История - VerifyAI{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <h1 class="page-title">История проверок</h1>
+    
+    {% if not logged_in %}
+    <div class="auth-prompt">
+        <p>Войдите, чтобы видеть историю</p>
+        <a href="/auth/login" class="btn-primary">Войти</a>
+    </div>
+    {% else %}
+    
+    <div class="history-table-wrapper">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Текст</th>
+                    <th>Индекс</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for claim in claims %}
+                <tr>
+                    <td>{{ claim.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                    <td class="claim-text">{{ claim.content_body[:80] }}{% if claim.content_body|length > 80 %}...{% endif %}</td>
+                    <td>
+                        {% if claim.status == 'completed' %}
+                        <span class="status-badge completed">✓</span>
+                        {% elif claim.status == 'processing' %}
+                        <span class="status-badge processing">⟳</span>
+                        {% else %}
+                        <span class="status-badge {{ claim.status }}">{{ claim.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="status-label {{ claim.status }}">{{ claim.status }}</span>
+                    </td>
+                    <td>
+                        {% if claim.status == 'completed' %}
+                        <a href="/claims/{{ claim.id }}/report" class="btn-small">Открыть</a>
+                        {% endif %}
+                        <button class="btn-small btn-delete" onclick="deleteClaim('{{ claim.id }}')">Удалить</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% endif %}
+</div>
+
+<script>
+async function deleteClaim(claimId) {
+    if (confirm('Удалить этот запрос?')) {
+        await fetch(`/api/claims/${claimId}`, { method: 'DELETE' });
+        location.reload();
+    }
+}
+</script>
+
+{% endblock %}
