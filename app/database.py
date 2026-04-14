@@ -8,7 +8,11 @@ class Base(DeclarativeBase):
 
 from app.config import settings
 
-DATABASE_URL = settings.database_url.replace("postgresql+psycopg2", "postgresql")
+DATABASE_URL = (
+    settings.database_url
+    .replace("postgresql+asyncpg", "postgresql")
+    .replace("postgresql+psycopg2", "postgresql")
+)
 
 engine = create_engine(
     DATABASE_URL,

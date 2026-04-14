@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -6,15 +8,20 @@ from starlette.middleware.sessions import SessionMiddleware
 from app.config import settings
 from app.database import engine, Base
 
-app = FastAPI(title="VerifyAI")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="VerifyAI", lifespan=lifespan)
 
 app.add_middleware(SessionMiddleware, secret_key=settings.secret_key)
 
 templates = Jinja2Templates(directory="app/templates")
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
-Base.metadata.create_all(bind=engine)
 
 from app.routers import pages, claims, auth
 
