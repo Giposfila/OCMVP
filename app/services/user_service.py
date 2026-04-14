@@ -1,5 +1,5 @@
 import uuid
-from passlib.hash import bcrypt
+import bcrypt
 from sqlalchemy.orm import Session
 from app.models import UserProfile
 
@@ -10,9 +10,9 @@ def create_user(
     user = UserProfile(
         id=uuid.uuid4(),
         email=email,
-        password_hash=bcrypt.hash(password),
+        password_hash=bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode(),
         role=role,
-        preferences={},
+        preferences="{}",
     )
     db.add(user)
     db.commit()
@@ -25,4 +25,4 @@ def get_user_by_email(db: Session, email: str) -> UserProfile | None:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return bcrypt.verify(plain_password, hashed_password)
+    return bcrypt.checkpw(plain_password.encode(), hashed_password.encode())

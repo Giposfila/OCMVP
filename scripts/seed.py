@@ -24,24 +24,24 @@ SessionLocal = sessionmaker(bind=engine)
 def create_seed_data():
     db = SessionLocal()
     try:
-        password = "test123"[:72]
+        password = b"test123"
 
         elena = UserProfile(
             id=uuid.uuid4(),
             email="elena@test.ru",
-            password_hash=bcrypt.hash(password),
+            password_hash=bcrypt.hashpw(password, bcrypt.gensalt()).decode(),
             role="StandardUser",
         )
         artem = UserProfile(
             id=uuid.uuid4(),
             email="artem@test.ru",
-            password_hash=bcrypt.hash(password),
+            password_hash=bcrypt.hashpw(password, bcrypt.gensalt()).decode(),
             role="ProfessionalAnalyst",
         )
         admin = UserProfile(
             id=uuid.uuid4(),
             email="admin@test.ru",
-            password_hash=bcrypt.hash(password),
+            password_hash=bcrypt.hashpw(password, bcrypt.gensalt()).decode(),
             role="Admin",
         )
 

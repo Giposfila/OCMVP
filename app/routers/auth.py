@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Depends, Form
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from passlib.hash import bcrypt
+import bcrypt
 from app.database import get_db
 from app.models import UserProfile
 from app.services.user_service import (
@@ -64,9 +64,7 @@ async def register(
             {"request": request, "error": "Пользователь с таким email уже существует"},
         )
 
-    new_user = create_user(
-        db, {"email": email, "password": password, "role": "StandardUser"}
-    )
+    new_user = create_user(db, email=email, password=password, role="StandardUser")
     request.session["user_id"] = str(new_user.id)
     request.session["user_email"] = new_user.email
     request.session["user_role"] = new_user.role
