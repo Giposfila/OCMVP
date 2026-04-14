@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: ocmvp
+    env: docker
+    region: oregon
+    plan: free
+    healthCheckPath: /\n    envVars:\n      - key: DATABASE_URL\n        scope: run\n        fromDatabase:\n          name: ocmvp-postgres\n          property: connectionString\n    dockerfilePath: ./Dockerfile
+
+  - type: pserv\n    name: ocmvp-postgres\n    ipAllowList: []\n    plan: free\n    region: oregon\n    postgresDatabaseName: ocmvp\n    postgresDatabaseUser: ocmvp\n    postgresVersion: '15'
