@@ -22,11 +22,11 @@
             <a href="/history" class="nav-link">История</a>
             {% if request.session.get("user_email") %}
                 <span class="nav-user">{{ request.session.get("user_email") }}</span>
-                <form method="post" action="/auth/logout" style="display:inline">
+                <form method="post" action="/logout" style="display:inline">
                     <button type="submit" class="nav-link btn-logout">Выйти</button>
                 </form>
             {% else %}
-                <a href="/auth/login" class="nav-link">Войти</a>
+                <a href="/login" class="nav-link">Войти</a>
             {% endif %}
         </div>
     </nav>

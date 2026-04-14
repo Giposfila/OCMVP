@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Depends, Form
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from passlib.hash import bcrypt
+import bcrypt
 from app.database import get_db
 from app.models import UserProfile
 from app.services.user_service import (
