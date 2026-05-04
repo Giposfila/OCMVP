@@ -6,6 +6,7 @@ from app.database import get_db
 from app.models import Claim, Report, Score, Source
 from app.services.claim_service import create_claim as create_claim_service
 from app.services.mock_analyzer import mock_analyze
+from app.services.crm_service import sync_claim_created
 import threading
 import asyncio
 
@@ -47,6 +48,8 @@ async def submit_claim(
         finally:
             db2.close()
 
+    sync_claim_created(claim, db)
+    thread = threading.Thread(target=run_analysis, args=(claim.id,))
     thread = threading.Thread(target=run_analysis, args=(claim.id,))
     thread.start()
 

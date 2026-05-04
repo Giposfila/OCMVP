@@ -120,6 +120,15 @@ def mock_analyze(claim_id: uuid.UUID, db: Session = None):
             db.add(claim_source)
 
         db.commit()
+        try:
+            from app.services.crm_service import sync_claim_completed
+            from app.models import Claim as ClaimModel
+            claim_obj = db.query(ClaimModel).filter(ClaimModel.id == claim_id).first()
+            if claim_obj:
+                sync_claim_completed(claim_obj, score_obj, report, db)
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).error(f"CRM sync error: {e}")
 
         update_claim_status(claim_id, "completed", db)
     finally:
