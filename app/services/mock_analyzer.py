@@ -130,7 +130,7 @@ def mock_analyze(claim_id: uuid.UUID, db: Session = None):
             import logging
             logging.getLogger(__name__).error(f"CRM sync error: {e}")
 
-        update_claim_status(claim_id, "completed", db)
+        update_claim_status(claim_id, "completed", db)  
     finally:
         if should_close:
             db.close()

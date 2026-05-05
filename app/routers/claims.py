@@ -9,7 +9,7 @@ from app.services.mock_analyzer import mock_analyze
 from app.services.crm_service import sync_claim_created
 import threading
 import asyncio
-
+from app.services.crm_service import sync_claim_created
 router = APIRouter()
 
 
@@ -38,7 +38,6 @@ async def submit_claim(
         user_id = str(user.id)
 
     claim = create_claim_service(db, content_body, source_platform, uuid.UUID(user_id))
-
     def run_analysis(claim_id):
         from app.database import SessionLocal
 
